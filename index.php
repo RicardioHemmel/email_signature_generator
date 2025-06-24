@@ -81,6 +81,15 @@
 
     </div>
 
+    <footer style="text-align: center; padding: 20px; margin-top: 30px; background-color: #f8f9fa; border-top: 1px solid #e9ecef;">
+        <p style="margin: 0; color: #6c757d; font-size: 14px;">
+            Projeto desenvolvido por Ricardo Hemmel | 
+            <a href="https://github.com/RicardioHemmel/email_signature_generator" target="_blank" style="color: #0d6efd; text-decoration: none;">
+                Código fonte disponível no GitHub
+            </a>
+        </p>
+    </footer>
+
     <script src="js/script.js"></script>
 </body>
 
