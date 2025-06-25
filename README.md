@@ -1,4 +1,4 @@
-⚙️ Configuração (config.php)
+**⚙️ Configuração (config.php)
 Contém todos os parâmetros ajustáveis:
 
 image
@@ -66,3 +66,4 @@ Redimensiona a imagem final para a resolução final definida.(Peguei uma base d
 Exporta a imagem em PNG com o nome formatado (NOME_YYYYMMDD_HHMMSS.png).
 
 Envia para download ou exibição inline, conforme o cabeçalho HTTP.
+**
