@@ -1,69 +1,58 @@
-**⚙️ Configuração (config.php)
-Contém todos os parâmetros ajustáveis:
+# ✨ Gerador de Assinaturas - Subprefeitura Capela do Socorro
 
-image
-template_image: caminho da imagem base
+Sistema desenvolvido para padronizar e facilitar a criação de assinaturas institucionais da Subprefeitura da Capela do Socorro. Com uma interface simples e intuitiva, permite que qualquer colaborador gere sua própria assinatura padronizada em segundos.
 
-output_width, output_height: dimensões finais da imagem gerada
+---
 
-fonts
-Caminhos para as fontes .TTF e .OTF utilizadas no texto.
+## ⚙️ Configuração (`config.php`)
 
-font_sizes
-Define o tamanho de cada tipo de texto (nome, textos gerais e “Subprefeitura”).
+Todas as definições personalizáveis estão centralizadas nesse arquivo:
 
-positions
-Define posições, espaçamentos e margens de cada bloco textual na imagem.
+### 🖼️ `image`
+- `template_image`: Caminho da imagem base.
+- `output_width`, `output_height`: Dimensões da imagem final gerada.
 
-text_color
-Cor do texto em RGB.
+### 🅰️ `fonts`
+- Caminhos absolutos para as fontes `.TTF` e `.OTF` utilizadas.
 
-addresses
-Endereços disponíveis para seleção no formulário.
+### 🔠 `font_sizes`
+- Define tamanhos específicos para:
+  - Nome
+  - Textos gerais
+  - Texto "Subprefeitura"
 
-subprefeitura_text
-Texto institucional que é inserido no rodapé da assinatura.
+### 📐 `positions`
+- Controla posições, espaçamentos e margens de todos os blocos de texto sobre a imagem.
 
-text_angle
-Ângulo de inclinação dos textos (em graus).
+### 🎨 `text_color`
+- Define a cor do texto (em RGB).
 
-🧠 Dependências
-Para o correto funcionamento, é necessário que o servidor PHP tenha as seguintes extensões ativas:
+### 📍 `addresses`
+- Lista de endereços disponíveis para seleção no formulário:
+  - `sede`
+  - `cpo`
+  - `almoxarifado`
 
-GD – para manipulação de imagens
+### 🏛️ `subprefeitura_text`
+- Texto institucional fixo que aparece ao final da imagem.
 
-FreeType – para desenhar texto com fontes TTF/OTF
+### 🔄 `text_angle`
+- Ângulo de inclinação do texto (normalmente 0).
 
-mbstring – para manipulação correta de caracteres com acento
+---
 
-(Se tiver usando o XAMPP precisa descomentar a linha do php.ini: "extension=gd")
+## 🧠 Dependências
 
-💡 Funcionamento (generate_image.php)
-Carrega o config.php com as definições da assinatura.
+Para o correto funcionamento do sistema, é necessário que o PHP esteja com as seguintes extensões ativas:
 
-Recebe os dados do formulário via POST:
+- `GD` → manipulação de imagens
+- `FreeType` → renderização de textos com fontes TTF/OTF
+- `mbstring` → suporte a caracteres com acento
 
-nome
+### ☑️ Ativando GD no `php.ini`
 
-cargo
+Se estiver usando XAMPP ou ambiente local:
 
-setor
-
-ramal
-
-e-mail (prefixo, o sufixo é fixo)
-
-endereço (chave: sede, cpo, almoxarifado)
-
-Constrói a imagem com base nos dados:
-
-Usa imagettftext() para desenhar os textos.
-
-Utiliza uma função textWrap() para quebrar linhas automaticamente com base no espaço disponível.
-
-Redimensiona a imagem final para a resolução final definida.(Peguei uma base de proporção com a função de redimensionar de forma proporcional do windows)
-
-Exporta a imagem em PNG com o nome formatado (NOME_YYYYMMDD_HHMMSS.png).
-
-Envia para download ou exibição inline, conforme o cabeçalho HTTP.
-**
+```ini
+; Descomente esta linha:
+extension=gd
