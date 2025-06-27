@@ -46,8 +46,11 @@ Todas as definições personalizáveis estão centralizadas nesse arquivo:
 Para o correto funcionamento do sistema, é necessário que o PHP esteja com as seguintes extensões ativas:
 
 - `GD` → manipulação de imagens
-- `FreeType` → renderização de textos com fontes TTF/OTF
 - `mbstring` → suporte a caracteres com acento
+
+  Comandos:
+  sudo apt install php-gd php-mbstring
+  sudo systemctl restart apache2
 
 ### ☑️ Ativando GD no `php.ini`
 
