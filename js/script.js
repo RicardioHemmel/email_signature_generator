@@ -1,135 +1,233 @@
-// Aguarda o carregamento completo da página
 document.addEventListener('DOMContentLoaded', function () {
-
-    // Lista de inputs
-    const formInputs = {
-        name: document.getElementById('name'),
-        role: document.getElementById('role'),
-        department: document.getElementById('department'),
-        email: document.getElementById('email'),
-        extension: document.getElementById('extension')
-    };
-
-    // Dropdown de endereços
-    const addressSelect = document.getElementById('address');
-    // Texto de complemento para o endereço
-    const addressComplementHidden = document.getElementById('address_complement');
-
-    // Array de Objetos com todas as opções de endereços
-    const addressMap = {
-        sede: {
-            address: 'Rua Cassiano dos Santos, 499',
-            complement: '04827-110 | São Paulo | SP'
+    // Inputs do formulário
+    const elements = {
+        inputs: {
+            name: document.getElementById('name'),
+            role: document.getElementById('role'),
+            department: document.getElementById('department'),
+            email: document.getElementById('email'),
+            extension: document.getElementById('extension'),
+            address: document.getElementById('address'),
+            prefix: document.getElementById('prefix'),
+            whatsapp: document.getElementById('whatsapp')
         },
-        cpo: {
-            address: 'Rua Cassiano dos Santos, 43',
-            complement: '04827-110 | São Paulo | SP'
+        // Divs de pré-visualização do formulário
+        previews: {
+            name: document.getElementById('previewName'),
+            roleDept: document.getElementById('previewRoleDept'),
+            email: document.getElementById('previewEmail'),
+            phone: document.getElementById('previewPhone'),
+            address: document.getElementById('previewAddress'),
+            complement: document.getElementById('previewComplement'),
+            subEmail: document.getElementById('previewSubEmail'),
+            instructions: document.getElementById('previewInstructions')
         },
-        almoxarifado: {
-            address: 'Rua Jaburuna, 82',
-            complement: '04803-040 | São Paulo | SP'
+        // Input escondido para enviar o complemento do endereço separado
+        hidden: {
+            addressComplement: document.getElementById('address_complement')
         }
     };
 
-    // Lista de campos de Pré-visualização
-    const previewFields = {
-        name: document.getElementById('previewName'),
-        roleDept: document.getElementById('previewRoleDept'),
-        email: document.getElementById('previewEmail'),
-        extension: document.getElementById('previewExtension'),
-        address: document.getElementById('previewAddress'),
-        complement: document.getElementById('previewComplement'),
-        subprefeitura: document.getElementById('previewSubEmail'),
-        instructions: document.getElementById('previewInstructions')
+    // Informações para popular os dropdowns
+    const constants = {
+        addresses: {
+            sede: { address: 'Rua Cassiano dos Santos, 499', complement: '04827-110 | São Paulo | SP' },
+            cpo: { address: 'Rua Cassiano dos Santos, 43', complement: '04827-110 | São Paulo | SP' },
+            almoxarifado: { address: 'Rua Jaburuna, 82', complement: '04803-040 | São Paulo | SP' }
+        },
+        prefixes: ['3397', '5660', '5666', '5667', '5668', '5669'],
+        // Domínio para exibição
+        emailDomain: '@smsub.prefeitura.sp.gov.br'
     };
 
+    // Configurações de visualização dos textos
+    const previewConfig = {
+        baseTop: 80, // Começa o texto
+        defaultSpacing: 8, // Espaçamento da linha
+        afterRoleDeptSpacing: 22 // Margem para separar o cargo e setor
+    };
 
-    // Configurações básicas da pré-visualização dos textos
-    const baseTop = 70;
-    const defaultSpacing = 6;
-    const afterRoleDeptSpacing = 22;
-
-    //Função para formatar texto em caixa alta ou baixa
-    function formatText(value, options = {}) {
-        if (!value) return '';
-        let result = value;
-        if (options.uppercase) result = result.toUpperCase();
-        if (options.lowercase) result = result.toLowerCase();
-        return result;
+    // Inicialização
+    function init() {
+        setupPrefixDropdown();
+        setupEventListeners();
+        updatePreview();
     }
 
-    // Atualiza os textos com base nos valores dos inputs
+    // Configura o dropdown de prefixos
+    function setupPrefixDropdown() {
+        const select = elements.inputs.prefix;
+        select.innerHTML = '<option value="">Selecione um Prefixo</option>';
+
+        constants.prefixes.forEach(prefix => {
+            select.add(new Option(prefix, prefix));
+        });
+    }
+
+
+    // Configura os event listeners
+    function setupEventListeners() {
+        // Validação especial para email
+        elements.inputs.email?.addEventListener('input', function () {
+            if (this.value.includes('@')) {
+                alert('Você não precisa digitar o "@smsub.prefeitura.sp.gov.br". Apenas insira o início do e-mail');
+                this.value = this.value.split('@')[0];
+            }
+            updatePreview();
+        });
+
+        // Adiciona listeners para todos os campos relevantes
+        Object.keys(elements.inputs).forEach(key => {
+            if (elements.inputs[key]) {
+                elements.inputs[key].addEventListener('input', updatePreview);
+            }
+        });
+
+        // Listener especial para o select de endereço
+        if (elements.inputs.address) {
+            elements.inputs.address.addEventListener('change', updatePreview);
+        }
+    }
+
+    // Atualiza toda a pré-visualização
     function updatePreview() {
+        updateTextPreview();
+        updateLayout();
+        updateInstructionsVisibility();
+    }
 
-        // Trata os valores recebidos dos inputs
-        const name = formatText(formInputs.name.value, { uppercase: true }) || 'Seu Nome Completo';
-        const role = formatText(formInputs.role.value, { uppercase: true });
-        const dept = formatText(formInputs.department.value, { uppercase: true });
-        const roleDeptText = role && dept ? `${role} / ${dept}` : role || dept || 'Seu Cargo / Setor';
-        const emailPrefix = formInputs.email.value.trim();
-        const email = emailPrefix ? formatText(emailPrefix + '@smsub.prefeitura.sp.gov.br', { lowercase: true }) : 'seu_email@smsub.prefeitura.sp.gov.br';
-        const extension = formInputs.extension.value.trim();
+    // Atualiza os textos da pré-visualização
+    function updateTextPreview() {
+        const { inputs, previews, hidden } = elements;
+        const { addresses, emailDomain } = constants;
 
-        // Endereço e complemento
-        const selectedKey = document.getElementById('address').value;
-        const fallback = addressMap['sede']; // endereço padrão
-        const selected = addressMap[selectedKey] || fallback;
+        // Formata os textos básicos
+        previews.name.textContent = formatText(inputs.name.value, { uppercase: true }) || 'Seu Nome Completo';
 
-        // Campo oculto com endereço completo
-        addressComplementHidden.value = selected.complement;
+        const role = formatText(inputs.role.value, { uppercase: true });
+        const dept = formatText(inputs.department.value, { uppercase: true });
+        previews.roleDept.textContent = role && dept ? `${role} / ${dept}` : role || dept || 'Seu Cargo / Setor';
 
-        // Insere os valores formatados na pré-visualização
-        previewFields.name.textContent = name;
-        previewFields.roleDept.textContent = roleDeptText;
-        previewFields.email.textContent = email;
-        previewFields.extension.textContent = extension ? `Tel: +55 (11) 3397-${extension}` : '';
-        previewFields.address.textContent = selected.address;
-        previewFields.complement.textContent = selected.complement;
+        // Email
+        const emailPrefix = inputs.email.value.trim();
+        previews.email.textContent = emailPrefix ?
+            `${emailPrefix.toLowerCase()}${emailDomain}` :
+            `seu_email${emailDomain}`;
 
-        // Espaçamento dinâmico
+        // Telefone e WhatsApp
+        updateContactPreview();
+
+        // Endereço
+        const addressKey = inputs.address.value || 'sede';
+        const address = addresses[addressKey] || addresses.sede;
+        previews.address.textContent = address.address;
+        previews.complement.textContent = address.complement;
+        hidden.addressComplement.value = address.complement;
+
+        // Subprefeitura
+        previews.subEmail.textContent = 'capeladosocorro.prefeitura.sp.gov.br';
+    }
+
+    // Lógica combinada para telefone e WhatsApp
+    function updateContactPreview() {
+        const { inputs, previews } = elements;
+        const prefix = inputs.prefix.value;
+        const extension = inputs.extension.value.trim();
+        const whatsapp = inputs.whatsapp.value.trim();
+
+        let contactInfo = '';
+
+        // Formata o telefone se existir
+        const phoneInfo = prefix && extension ?
+            `${prefix}-${extension}` :
+            (prefix ? `${prefix}-____` :
+                (extension ? `____-${extension}` : ''));
+
+        // Formata o WhatsApp se existir
+        const whatsappInfo = whatsapp ?
+            whatsapp.replace(/(\d{5})(\d{4})/, '$1-$2') : '';
+
+        // Combina as informações conforme as novas regras
+        if (phoneInfo && whatsappInfo) {
+            contactInfo = `Tel: +55 (11) ${phoneInfo} / Whatsapp: ${whatsappInfo}`;
+        } else if (phoneInfo) {
+            contactInfo = `Tel: +55 (11) ${phoneInfo}`;
+        } else if (whatsappInfo) {
+            contactInfo = `Whatsapp: +55 (11) ${whatsappInfo}`;
+        }
+
+        // Atualiza o preview
+        if (contactInfo) {
+            previews.phone.textContent = contactInfo;
+            previews.phone.style.display = 'block';
+        } else {
+            previews.phone.style.display = 'none';
+        }
+    }
+
+    // Atualiza o posicionamento dos elementos
+    function updateLayout() {
+        const { previews } = elements;
+        const { baseTop, defaultSpacing, afterRoleDeptSpacing } = previewConfig;
+
         let currentTop = baseTop;
-        const orderedFields = [
-            { el: previewFields.name, spacing: defaultSpacing },
-            { el: previewFields.roleDept, spacing: afterRoleDeptSpacing },
-            { el: previewFields.email, spacing: defaultSpacing },
-            { el: previewFields.extension, spacing: defaultSpacing },
-            { el: previewFields.address, spacing: defaultSpacing },
-            { el: previewFields.complement, spacing: defaultSpacing },
-            { el: previewFields.subprefeitura, spacing: defaultSpacing }
+        const fieldsOrder = [
+            previews.name,
+            previews.roleDept,
+            previews.email,
+            previews.phone,
+            previews.address,
+            previews.complement,
+            previews.subEmail
         ];
 
-        orderedFields.forEach(({ el, spacing }) => {
-            el.style.top = currentTop + 'px';
-            const height = el.offsetHeight;
-            currentTop += height + spacing;
-        });
+        fieldsOrder.forEach((field, index) => {
+            if (!field) return;
 
-        const algumPreenchido = Object.values(formInputs).some(input => input.value.trim() !== '');
-        previewFields.instructions.style.display = algumPreenchido ? 'none' : 'block';
+            const isVisible = field.style.display !== 'none';
+            if (isVisible) {
+                field.style.top = currentTop + 'px';
+                const spacing = index === 1 ? afterRoleDeptSpacing : defaultSpacing;
+                currentTop += field.offsetHeight + spacing;
+            }
+        });
     }
 
-    // Eventos dos inputs
-    Object.values(formInputs).forEach(input => {
-        input.addEventListener('input', updatePreview);
-        input.addEventListener('focus', () => {
-            input.previousElementSibling.style.color = 'var(--primary)';
-        });
-        input.addEventListener('blur', () => {
-            input.previousElementSibling.style.color = 'var(--dark)';
-        });
-    });
+    // Atualiza a visibilidade das instruções
+    function updateInstructionsVisibility() {
+        const hasContent = Object.values(elements.inputs).some(
+            input => input && input.value.trim() !== ''
+        );
+        elements.previews.instructions.style.display = hasContent ? 'none' : 'block';
+    }
 
-    // Prevenção do uso de @ no campo email
-    formInputs.email.addEventListener('input', function () {
-        if (this.value.includes('@')) {
-            alert('Você não precisa digitar o "@smsub.prefeitura.sp.gov.br". Apenas insira o início do e-mail.');
-            this.value = this.value.replace(/@.*/, '');
-        }
-        updatePreview();
-    });
+    // Helper para formatação de texto
+    function formatText(text, options = {}) {
+        if (!text) return '';
+        if (options.uppercase) return text.toUpperCase();
+        if (options.lowercase) return text.toLowerCase();
+        return text;
+    }
 
-    // Atualiza o preview ao trocar de endereço
-    addressSelect.addEventListener('change', updatePreview);
-
-    updatePreview();
+    // Inicia a aplicação
+    init();
 });
+
+// Validação global para campos numéricos
+function validarNumero(input) {
+    input.value = input.value.replace(/[^0-9]/g, '');
+}
+
+// Validação do formulário (para adicionar no onsubmit do form)
+function validarFormulario() {
+    const prefix = document.getElementById('prefix').value;
+    const extension = document.getElementById('extension').value.trim();
+
+    // Validação do telefone (ambos campos obrigatórios se algum estiver preenchido)
+    if ((prefix && !extension) || (!prefix && extension)) {
+        alert('Por favor, preencha tanto o prefixo quanto a extensão do ramal');
+        return false;
+    }
+
+    return true;
+}

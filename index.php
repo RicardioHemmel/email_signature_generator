@@ -13,7 +13,7 @@
     <div class="container">
         <div class="form-container">
             <h2>Gerador de Assinatura</h2>
-            <form id="signatureForm" action="generate_image.php" method="post" target="_blank">
+            <form id="signatureForm" action="generate_image.php" method="post" target="_blank" onsubmit="return validarFormulario()">
                 <div class="form-group">
                     <label for="name">Nome Completo</label>
                     <input type="text" id="name" name="name" placeholder="Seu nome completo" required maxlength="50">
@@ -21,25 +21,43 @@
 
                 <div class="form-group">
                     <label for="role">Cargo</label>
-                    <input type="text" id="role" name="role" placeholder="Seu cargo" maxlength="36">
+                    <input type="text" id="role" name="role" placeholder="Seu cargo" maxlength="36" required>
                 </div>
 
                 <div class="form-group">
                     <label for="department">Setor</label>
-                    <input type="text" id="department" name="department" placeholder="Sua unidade" maxlength="36">
+                    <input type="text" id="department" name="department" placeholder="Sua unidade" maxlength="36" required>
                 </div>
 
                 <div class="form-group">
                     <label for="email">E-mail</label>
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0px 8px;">
-                        <input type="text" id="email" name="email" placeholder="Seu email" maxlength="100">
+                    <div id="email-domain-container">
+                        <input type="text" id="email" name="email" placeholder="Seu email" maxlength="100" required>
                         <div><b>@smsub.prefeitura.sp.gov.br</b></div>
                     </div>
                 </div>
 
+                <div class="form-group" id="prefix-extension-container">
+                    <div>
+                        <label for="prefix">Prefixo</label>
+                        <select id="prefix" name="prefix"></select>
+                    </div>
+
+                    <div>
+                        <label for="extension">Ramal</label>
+                        <input type="text" id="extension" name="extension"
+                            placeholder="Número do ramal"
+                            pattern="\d{4}"
+                            maxlength="4"
+                            title="Digite exatamente 4 números"
+                            oninput="validarNumero(this)">
+                    </div>
+                </div>
+
                 <div class="form-group">
-                    <label for="extension">Ramal</label>
-                    <input type="text" id="extension" name="extension" placeholder="Número do ramal">
+                    <label for="whatsapp">WhatsApp (opcional)</label>
+                    <input type="text" id="whatsapp" name="whatsapp" placeholder="Ex: 912345678"
+                        maxlength="9" minlength="9" oninput="validarNumero(this)">
                 </div>
 
                 <div class="form-group">
@@ -64,13 +82,16 @@
             <h2>Prévia da Assinatura</h2>
             <div class="preview">
                 <img id="previewImage" src="public/signature_template.png" alt="Template de Assinatura">
+                <div id="previewSubprefeitura" class="preview-text">
+                    SUBPREFEITURA<br>CAPELA DO SOCORRO
+                </div>
                 <div class="preview-overlay">
                     <div id="previewName" class="preview-text" style="font-size: 20px; font-weight: bold; left: 200px; top: 80px;">Seu Nome Completo</div>
                     <div id="previewRoleDept" class="preview-text" style="font-size: 14px; left: 200px; top: 110px;">Seu Cargo / Setor</div>
                     <div id="previewEmail" class="preview-text" style="font-size: 14px; left: 200px; top: 148px;">seu_email@smsub.prefeitura.sp.gov.br</div>
-                    <div id="previewExtension" class="preview-text" style="font-size: 14px; left: 200px; top: 170px;">Tel: +55 (11) 3397-</div>
+                    <div id="previewPhone" class="preview-text" style="font-size: 14px; left: 200px; top: 170px;"></div>
                     <div id="previewAddress" class="preview-text" style="font-size: 14px; left: 200px; top: 190px;">Rua Cassiano dos Santos, 499</div>
-                    <div id="previewComplement" class="preview-text" style="font-size: 14px; left: 200px; top: 210px;"> 04827-110 | São Paulo | SP</div>
+                    <div id="previewComplement" class="preview-text" style="font-size: 14px; left: 200px; top: 210px;">04827-110 | São Paulo | SP</div>
                     <div id="previewSubEmail" class="preview-text" style="font-size: 14px; left: 200px; top: 230px;">capeladosocorro.prefeitura.sp.gov.br</div>
                 </div>
             </div>
@@ -78,12 +99,11 @@
                 Preencha os campos ao lado para ver a prévia atualizada
             </div>
         </div>
-
     </div>
 
     <footer style="text-align: center; padding: 20px; margin-top: 30px; background-color: #f8f9fa; border-top: 1px solid #e9ecef;">
         <p style="margin: 0; color: #6c757d; font-size: 14px;">
-            Projeto desenvolvido por Ricardo Hemmel | 
+            Projeto desenvolvido por Ricardo Hemmel |
             <a href="https://github.com/RicardioHemmel/email_signature_generator" target="_blank" style="color: #0d6efd; text-decoration: none;">
                 Código fonte disponível no GitHub
             </a>

@@ -94,8 +94,11 @@
             background-color: #f8f9fa;
         }
 
-        #email {
-            width: 50% !important;
+        #email-domain-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
         }
 
         input:focus {
@@ -154,6 +157,27 @@
             width: 100%;
             height: auto;
             display: block;
+        }
+
+        #previewSubprefeitura {
+            font-size: 12px;
+            font-weight: bold;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            left: 33px;
+            bottom: 110px;
+            position: absolute;
+            white-space: pre-line;
+            text-align: center;
+        }
+
+        #prefix-extension-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #prefix-extension-container div {
+            width: 100%;
         }
 
         .preview-overlay {

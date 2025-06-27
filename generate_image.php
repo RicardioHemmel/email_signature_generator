@@ -15,13 +15,41 @@ $addressData = $config['addresses'][$addressKey] ?? $config['addresses']['sede']
 $address = $addressData['address'];
 $complement = $addressData['complement'];
 
+// Prepara os dados de contato (ramal e whatsapp)
+$phoneInfo = '';
+$whatsappInfo = $_POST['whatsapp'] ?? '';
+
+// Formata o ramal se existir
+if (!empty($_POST['prefix']) && !empty($_POST['extension'])) {
+    $phoneInfo = $_POST['prefix'] . '-' . $_POST['extension'];
+} elseif (!empty($_POST['prefix'])) {
+    $phoneInfo = $_POST['prefix'] . '-____';
+} elseif (!empty($_POST['extension'])) {
+    $phoneInfo = '____-' . $_POST['extension'];
+}
+
+// Formata o WhatsApp se existir
+if (!empty($whatsappInfo)) {
+    $whatsappInfo = preg_replace('/(\d{5})(\d{4})/', '$1-$2', $whatsappInfo);
+}
+
+// Combina as informações de contato conforme as regras
+$contactInfo = '';
+if ($phoneInfo && $whatsappInfo) {
+    $contactInfo = 'Tel: +55 (11) ' . $phoneInfo . ' / WhatsApp: ' . $whatsappInfo;
+} elseif ($phoneInfo) {
+    $contactInfo = 'Tel: +55 (11) ' . $phoneInfo;
+} elseif ($whatsappInfo) {
+    $contactInfo = 'WhatsApp: +55 (11) ' . $whatsappInfo;
+}
+
 //Define os dados a serem exibidos
 $data = [
     'name'     => mb_strtoupper($_POST['name']),
     'role'    => mb_strtoupper($_POST['role']),
     'department'  => mb_strtoupper($_POST['department']),
     'email'    => mb_strtolower($_POST['email'] . '@smsub.prefeitura.sp.gov.br'),
-    'extension' => 'Tel: +55 (11) 3397-' . $_POST['extension'],
+    'contact' => $contactInfo,
     'address' => $address,
     'address_complement' => $complement,
     'subprefecture_email' => 'capeladosocorro.prefeitura.sp.gov.br',
@@ -36,9 +64,9 @@ if (isset($data['role'], $data['department'])) {
     unset($data['role'], $data['department']);
 }
 
-// Se não tiver ramal não inclui o texto do prefixo
-if (empty($_POST['extension'])) {
-    unset($data['extension']);
+// Remove o campo de contato se estiver vazio
+if (empty($data['contact'])) {
+    unset($data['contact']);
 }
 
 // Define a ordem dos campos (com cargo_unidade após o nome)
@@ -55,7 +83,7 @@ if (isset($roleDepartment)) {
     $data['role_department'] = $roleDepartment;
 }
 
-// 7. Função auxiliar para quebrar uma string em várias linhas
+// Função auxiliar para quebrar uma string em várias linhas
 function textWrap($text, $fontSize, $angle, $arialFont, $maxWidth)
 {
     $words = explode(' ', $text);
@@ -145,7 +173,6 @@ function sanitizeFilename($string)
     return $string;
 }
 
-
 // Disponibiliza para download em PNG
 header('Content-Type: image/png');
 
@@ -157,6 +184,7 @@ header('Content-Disposition: attachment; filename="' . $filename . '"');
 
 // Exibe a imagem em vez de baixa-la
 //header('Content-Disposition: inline; filename="' . $filename . '"');
+
 
 imagepng($imageFinal, null, 9); // Qualidade máxima PNG
 
