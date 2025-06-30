@@ -49,8 +49,8 @@ Para o correto funcionamento do sistema, é necessário que o PHP esteja com as 
 - `mbstring` → suporte a caracteres com acento
 
   Comandos:
-  sudo apt install php-gd php-mbstring
-  sudo systemctl restart apache2
+  - sudo apt install php-gd php-mbstring
+  - sudo systemctl restart apache2
 
 ### ☑️ Ativando GD no `php.ini`
 
