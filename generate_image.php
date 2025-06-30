@@ -36,11 +36,11 @@ if (!empty($whatsappInfo)) {
 // Combina as informações de contato conforme as regras
 $contactInfo = '';
 if ($phoneInfo && $whatsappInfo) {
-    $contactInfo = 'Tel: +55 (11) ' . $phoneInfo . ' / WhatsApp: ' . $whatsappInfo;
+    $contactInfo = 'Tel: +55 (11) ' . $phoneInfo . ' / Cel: ' . $whatsappInfo;
 } elseif ($phoneInfo) {
     $contactInfo = 'Tel: +55 (11) ' . $phoneInfo;
 } elseif ($whatsappInfo) {
-    $contactInfo = 'WhatsApp: +55 (11) ' . $whatsappInfo;
+    $contactInfo = 'Cel: +55 (11) ' . $whatsappInfo;
 }
 
 //Define os dados a serem exibidos
@@ -52,7 +52,7 @@ $data = [
     'contact' => $contactInfo,
     'address' => $address,
     'address_complement' => $complement,
-    'subprefecture_email' => 'capeladosocorro.prefeitura.sp.gov.br',
+    'subprefecture_email' => 'prefeitura.sp.gov.br/capela_do_socorro',
 ];
 
 // Remove campos vazios

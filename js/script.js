@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function () {
         hidden.addressComplement.value = address.complement;
 
         // Subprefeitura
-        previews.subEmail.textContent = 'capeladosocorro.prefeitura.sp.gov.br';
+        previews.subEmail.textContent = 'prefeitura.sp.gov.br/capela_do_socorro';
     }
 
     // Lógica combinada para telefone e WhatsApp
@@ -149,11 +149,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Combina as informações conforme as novas regras
         if (phoneInfo && whatsappInfo) {
-            contactInfo = `Tel: +55 (11) ${phoneInfo} / Whatsapp: ${whatsappInfo}`;
+            contactInfo = `Tel: +55 (11) ${phoneInfo} / Cel: ${whatsappInfo}`;
         } else if (phoneInfo) {
             contactInfo = `Tel: +55 (11) ${phoneInfo}`;
         } else if (whatsappInfo) {
-            contactInfo = `Whatsapp: +55 (11) ${whatsappInfo}`;
+            contactInfo = `Cel: +55 (11) ${whatsappInfo}`;
         }
 
         // Atualiza o preview

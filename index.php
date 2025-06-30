@@ -55,7 +55,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="whatsapp">WhatsApp (opcional)</label>
+                    <label for="whatsapp">Celular (opcional)</label>
                     <input type="text" id="whatsapp" name="whatsapp" placeholder="Ex: 912345678"
                         maxlength="9" minlength="9" oninput="validarNumero(this)">
                 </div>
@@ -92,7 +92,7 @@
                     <div id="previewPhone" class="preview-text" style="font-size: 14px; left: 200px; top: 170px;"></div>
                     <div id="previewAddress" class="preview-text" style="font-size: 14px; left: 200px; top: 190px;">Rua Cassiano dos Santos, 499</div>
                     <div id="previewComplement" class="preview-text" style="font-size: 14px; left: 200px; top: 210px;">04827-110 | São Paulo | SP</div>
-                    <div id="previewSubEmail" class="preview-text" style="font-size: 14px; left: 200px; top: 230px;">capeladosocorro.prefeitura.sp.gov.br</div>
+                    <div id="previewSubEmail" class="preview-text" style="font-size: 14px; left: 200px; top: 230px;">prefeitura.sp.gov.br/capela_do_socorro</div>
                 </div>
             </div>
             <div id="previewInstructions" style="margin-top: 15px; font-size: 14px; color: #6c757d; text-align: center;">
